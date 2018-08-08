@@ -41,25 +41,21 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42,
     stratify=y_enc
 )
-#
-# clf = SVC()
-# clf.fit(X_train, y_train)
-# print('fit done')
-# SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-#     decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
-#     max_iter=-1, probability=False, random_state=None, shrinking=True,
-#     tol=0.001, verbose=False)
-#
 
-clf = svm.LinearSVC(loss='hinge')
+clf = SVC()
 clf.fit(X_train, y_train)
+print('fit done')
+SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+    decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
+    max_iter=-1, probability=False, random_state=None, shrinking=True,
+    tol=0.001, verbose=False)
+
+
+# clf = svm.LinearSVC(loss='hinge')
+# clf.fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
 
 print(metrics.f1_score(y_test, y_pred))
 
 print('SVC Done')
-
-y_pred = clf.predict(X_test)
-
-print(metrics.f1_score(y_test, y_pred))
