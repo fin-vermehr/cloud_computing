@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn import metrics
 from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import StratifiedShuffleSplit
 
 
 print('started running')
@@ -42,20 +44,40 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y_enc
 )
 
-clf = SVC()
+clf = svm.LinearSVC(loss='hinge')
 clf.fit(X_train, y_train)
-print('fit done')
-SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-    decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
-    max_iter=-1, probability=False, random_state=None, shrinking=True,
-    tol=0.001, verbose=False)
-
-
-# clf = svm.LinearSVC(loss='hinge')
-# clf.fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
 
 print(metrics.f1_score(y_test, y_pred))
 
-print('SVC Done')
+print(pd.DataFrame(
+      metrics.confusion_matrix(y_test, y_pred),
+      index=[['actual', 'actual'], ['spam', 'ham']],
+      columns=[['predicted', 'predicted'], ['spam', 'ham']]))
+
+param_grid = [{'C': np.logspace(-4, 4, 5)}]
+
+grid_search = GridSearchCV(
+    estimator=svm.LinearSVC(loss='hinge'),
+    param_grid=param_grid,
+    cv=StratifiedShuffleSplit(n_splits=10, test_size=0.2, random_state=42),
+    scoring='f1',
+    n_jobs=-1
+)
+
+
+grid_search.fit(X_ngrams, y_enc)
+final_clf = svm.LinearSVC(loss='hinge', C=grid_search.best_params_['C'])
+final_clf.fit(X_ngrams, y_enc)
+y_pred = final_clf.predict(X_test)
+
+print(metrics.f1_score(y_test, y_pred))
+
+print(pd.Series(
+      clf.coef_.T.ravel(),
+      index=vectorizer.get_feature_names()).sort_values(ascending=False)[:20])
+
+print(pd.Series(
+      clf.coef_.T.ravel(),
+      index=vectorizer.get_feature_names()).sort_values(ascending=True)[:20])
