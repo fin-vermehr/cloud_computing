@@ -93,34 +93,30 @@ print(pd.Series(
 
 df_final = pd.DataFrame()
 
-df_input = pd.read_csv('prepocessed_input.csv')
-
-print(df_input.shape)
+df_input = pd.read_csv('/Users/nif/Documents/website/cloud_computing/prepocessed_input.csv')
 
 df_input = df_input.dropna()
 
-print(df_input.shape)
 
 df_list = list()
 for index in df_input.index:
-    df_tmp = pd.DataFrame()
-
     username = df_input['username'].loc[index]
     tweet = df_input['tweet'].loc[index]
-
     tmp = vectorizer.transform([tweet])
     score = final_clf.decision_function(tmp)
 
-    df_tmp['username'] = username
-    df_tmp['score'] = score
-
     if final_clf.predict(tmp):
-        df_tmp['category'] = 'r'
+        category = 'r'
     else:
-        df_tmp['category'] = 'o'
+        category = 'o'
+
+    df_tmp = pd.DataFrame({'username': [username], 'score': [score], 'category': [category]})
 
     df_list.append(df_tmp)
 
 df_final = pd.concat(df_list)
 
-df_final.to_csv('categorized_users.csv')
+df_final = df_final.reset_index()
+df_final = df_final.drop('index', axis=1)
+
+df_final.to_csv('categorized_users_f.csv')
