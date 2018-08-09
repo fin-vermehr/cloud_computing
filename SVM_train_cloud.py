@@ -121,6 +121,6 @@ for index in df_input.index:
 
     df_list.append(df_tmp)
 
-df_final = df_final.concat(df_list)
+df_final = pd.concat(df_list)
 
 df_final.to_csv('categorized_users.csv')
