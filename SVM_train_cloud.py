@@ -72,6 +72,8 @@ final_clf = svm.LinearSVC(loss='hinge', C=grid_search.best_params_['C'])
 final_clf.fit(X_ngrams, y_enc)
 y_pred = final_clf.predict(X_test)
 
+print(grid_search.best_params_['C'])
+
 print(metrics.f1_score(y_test, y_pred))
 
 print(pd.DataFrame(
