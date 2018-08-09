@@ -44,7 +44,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y_enc
 )
 
-clf = svm.LinearSVC(loss='hinge', C=1.0)
+clf = svm.LinearSVC(loss='hinge')
 clf.fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
@@ -56,38 +56,38 @@ print(pd.DataFrame(
       index=[['actual', 'actual'], ['spam', 'ham']],
       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
-# param_grid = [{'C': np.logspace(-4, 4, 15)}]
-#
-# grid_search = GridSearchCV(
-#     estimator=svm.LinearSVC(loss='hinge'),
-#     param_grid=param_grid,
-#     cv=StratifiedShuffleSplit(n_splits=10, test_size=0.2, random_state=42),
-#     scoring='f1',
-#     n_jobs=-1
-# )
+param_grid = [{'C': np.logspace(-4, 4, 10)}]
+
+grid_search = GridSearchCV(
+    estimator=svm.LinearSVC(loss='hinge'),
+    param_grid=param_grid,
+    cv=StratifiedShuffleSplit(n_splits=10, test_size=0.2, random_state=42),
+    scoring='f1',
+    n_jobs=-1
+)
 
 
-# grid_search.fit(X_ngrams, y_enc)
-# final_clf = svm.LinearSVC(loss='hinge', C=grid_search.best_params_['C'])
-# final_clf.fit(X_ngrams, y_enc)
-# y_pred = final_clf.predict(X_test)
-#
-# print('Best Parameter:' + str(grid_search.best_params_['C']))
-#
-# print(metrics.f1_score(y_test, y_pred))
-#
-# print(pd.DataFrame(
-#       metrics.confusion_matrix(y_test, y_pred),
-#       index=[['actual', 'actual'], ['spam', 'ham']],
-#       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
+grid_search.fit(X_ngrams, y_enc)
+final_clf = svm.LinearSVC(loss='hinge', C=grid_search.best_params_['C'])
+final_clf.fit(X_ngrams, y_enc)
+y_pred = final_clf.predict(X_test)
+
+print('Best Parameter:' + str(grid_search.best_params_['C']))
+
+print(metrics.f1_score(y_test, y_pred))
+
+print(pd.DataFrame(
+      metrics.confusion_matrix(y_test, y_pred),
+      index=[['actual', 'actual'], ['spam', 'ham']],
+      columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
 
 print(pd.Series(
-      clf.coef_.T.ravel(),
+      final_clf.coef_.T.ravel(),
       index=vectorizer.get_feature_names()).sort_values(ascending=False)[:20])
 
 print(pd.Series(
-      clf.coef_.T.ravel(),
+      final_clf.coef_.T.ravel(),
       index=vectorizer.get_feature_names()).sort_values(ascending=True)[:20])
 
 
@@ -109,12 +109,12 @@ for index in df_input.index:
     tweet = df_input['tweet'].loc[index]
 
     tmp = vectorizer.transform([tweet])
-    score = clf.decision_function(tmp)
+    score = final_clf.decision_function(tmp)
 
     df_tmp['username'] = username
     df_tmp['score'] = score
 
-    if clf.predict(tmp):
+    if final_clf.predict(tmp):
         df_tmp['category'] = 'r'
     else:
         df_tmp['category'] = 'o'
