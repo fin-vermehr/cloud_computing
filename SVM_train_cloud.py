@@ -44,7 +44,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y_enc
 )
 
-clf = svm.LinearSVC(loss='hinge', C=1)
+clf = svm.LinearSVC(loss='hinge', C=1.0)
 clf.fit(X_train, y_train)
 
 y_pred = clf.predict(X_test)
@@ -101,12 +101,14 @@ for index in df_input.index:
 
     username = df_input['username'].loc[index]
     tweet = df_input['tweet'].loc[index]
-    score = clf.decision_function(vectorizer.transform(tweet))
+
+    tmp = vectorizer.transform([tweet])
+    score = clf.decision_function(tmp)
 
     df_tmp['username'] = username
     df_tmp['score'] = score
 
-    if clf.predict(vectorizer.transform(tweet)):
+    if clf.predict(tmp):
         df_tmp['category'] = 'r'
     else:
         df_tmp['category'] = 'o'
