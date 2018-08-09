@@ -95,6 +95,12 @@ df_final = pd.DataFrame()
 
 df_input = pd.read_csv('prepocessed_input.csv')
 
+print(df_input.shape)
+
+df_input = df_input.dropna()
+
+print(df_input.shape)
+
 df_list = list()
 for index in df_input.index:
     df_tmp = pd.DataFrame()
