@@ -56,7 +56,7 @@ print(pd.DataFrame(
       index=[['actual', 'actual'], ['spam', 'ham']],
       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
-param_grid = [{'C': np.logspace(-4, 4, 8)}]
+param_grid = [{'C': np.logspace(-4, 4, 15)}]
 
 grid_search = GridSearchCV(
     estimator=svm.LinearSVC(loss='hinge'),
@@ -72,7 +72,7 @@ final_clf = svm.LinearSVC(loss='hinge', C=grid_search.best_params_['C'])
 final_clf.fit(X_ngrams, y_enc)
 y_pred = final_clf.predict(X_test)
 
-print(grid_search.best_params_['C'])
+print('Best Parameter:' + str(grid_search.best_params_['C']))
 
 print(metrics.f1_score(y_test, y_pred))
 
