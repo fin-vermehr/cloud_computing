@@ -93,7 +93,7 @@ print(pd.Series(
 
 df_final = pd.DataFrame()
 
-df_input = pd.read_csv('/Users/nif/Documents/website/cloud_computing/prepocessed_input.csv')
+df_input = pd.read_csv('prepocessed_input.csv')
 
 df_input = df_input.dropna()
 
