@@ -56,7 +56,7 @@ print(pd.DataFrame(
       index=[['actual', 'actual'], ['spam', 'ham']],
       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
-param_grid = [{'C': np.logspace(-4, 4, 5)}]
+param_grid = [{'C': np.logspace(-4, 4, 8)}]
 
 grid_search = GridSearchCV(
     estimator=svm.LinearSVC(loss='hinge'),
@@ -74,6 +74,12 @@ y_pred = final_clf.predict(X_test)
 
 print(metrics.f1_score(y_test, y_pred))
 
+print(pd.DataFrame(
+      metrics.confusion_matrix(y_test, y_pred),
+      index=[['actual', 'actual'], ['spam', 'ham']],
+      columns=[['predicted', 'predicted'], ['spam', 'ham']]))
+
+
 print(pd.Series(
       clf.coef_.T.ravel(),
       index=vectorizer.get_feature_names()).sort_values(ascending=False)[:20])
@@ -81,3 +87,33 @@ print(pd.Series(
 print(pd.Series(
       clf.coef_.T.ravel(),
       index=vectorizer.get_feature_names()).sort_values(ascending=True)[:20])
+
+
+# df_final = pd.DataFrame()
+#
+# df_input = pd.read_csv('prepocessed_input.csv')
+#
+# score_list = []
+# username_list = []
+# category_list = []
+#
+#
+# for index in df_input.index:
+#     username = df_input['username'].loc[index]
+#     tweet = df_input['tweet'].loc[index]
+#     score = final_clf.decision_function(vectorizer.transform(tweet))
+#
+#     if final_clf.predict(vectorizer.transform(tweet)):
+#         category_list.append('r')
+#     else:
+#         category_list.append('o')
+#
+#     username_list.append(username)
+#     score_list.append(score)
+#
+# df_final['username'] = username_list
+# df_final['score'] = score_list
+# df_final['category'] = category_list
+#
+# df_final.to_csv('categorized_users.csv')
+#
