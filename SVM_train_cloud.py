@@ -13,7 +13,7 @@ from sklearn import metrics
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
-
+import os
 
 print('started running')
 df = pd.read_csv('preprocessed_data.csv')
@@ -84,39 +84,53 @@ print(pd.DataFrame(
 
 print(pd.Series(
       final_clf.coef_.T.ravel(),
-      index=vectorizer.get_feature_names()).sort_values(ascending=False)[:20])
+      index=vectorizer.get_feature_names()).sort_values(ascending=False)[:50])
 
 print(pd.Series(
       final_clf.coef_.T.ravel(),
-      index=vectorizer.get_feature_names()).sort_values(ascending=True)[:20])
+      index=vectorizer.get_feature_names()).sort_values(ascending=True)[:50])
 
 
-df_final = pd.DataFrame()
+for file in os.listdir('processed_companies'):
+    df_input = pd.read_csv('processed_companies/' + file)
 
-df_input = pd.read_csv('prepocessed_input.csv')
+    score_list = []
+    for index in df_input.index:
+        tweet = df_input['tweet'].loc[index]
+        tmp = vectorizer.transform([tweet])
+        score = final_clf.decision_function(tmp)
+        list.append(float(score.strip('[').strip(']')))
+    df_final = pd.DataFrame()
+    df_final['score'] = score_list
+    df_final.to_csv('scored_companies/' + file)
 
-df_input = df_input.dropna()
+
+# df_final = pd.DataFrame()
+#
+# df_input = pd.read_csv('prepocessed_input.csv')
+#
+# df_input = df_input.dropna()
 
 
-df_list = list()
-for index in df_input.index:
-    username = df_input['username'].loc[index]
-    tweet = df_input['tweet'].loc[index]
-    tmp = vectorizer.transform([tweet])
-    score = final_clf.decision_function(tmp)
-
-    if final_clf.predict(tmp):
-        category = 'r'
-    else:
-        category = 'o'
-
-    df_tmp = pd.DataFrame({'username': [username], 'score': [score], 'category': [category]})
-
-    df_list.append(df_tmp)
-
-df_final = pd.concat(df_list)
-
-df_final = df_final.reset_index()
-df_final = df_final.drop('index', axis=1)
-
-df_final.to_csv('categorized_users_f.csv')
+# df_list = list()
+# for index in df_input.index:
+#     username = df_input['username'].loc[index]
+#     tweet = df_input['tweet'].loc[index]
+#     tmp = vectorizer.transform([tweet])
+#     score = final_clf.decision_function(tmp)
+#
+#     if final_clf.predict(tmp):
+#         category = 'r'
+#     else:
+#         category = 'o'
+#
+#     df_tmp = pd.DataFrame({'username': [username], 'score': [score], 'category': [category]})
+#
+#     df_list.append(df_tmp)
+#
+# df_final = pd.concat(df_list)
+#
+# df_final = df_final.reset_index()
+# df_final = df_final.drop('index', axis=1)
+#
+# df_final.to_csv('categorized_users_f.csv')
