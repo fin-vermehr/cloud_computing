@@ -99,7 +99,7 @@ for file in os.listdir('processed_companies'):
         tweet = df_input['tweet'].loc[index]
         tmp = vectorizer.transform([tweet])
         score = clf.decision_function(tmp)
-        list.append(float(score[0]))
+        score_list.append(score[0])
     df_final = pd.DataFrame()
     df_final['score'] = score_list
     df_final.to_csv('scored_companies/' + file)
