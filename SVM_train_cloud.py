@@ -14,6 +14,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
 import os
+from pprint import pprint
 
 print('started running')
 df = pd.read_csv('preprocessed_data.csv')
@@ -102,6 +103,8 @@ for file in os.listdir('processed_companies'):
         score_list.append(score[0])
     df_final = pd.DataFrame()
     df_final['score'] = score_list
+    pprint(file)
+    file = file.strip(' ')
     df_final.to_csv('scored_companies/' + file)
 
 
