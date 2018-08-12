@@ -57,7 +57,7 @@ print(pd.DataFrame(
       index=[['actual', 'actual'], ['spam', 'ham']],
       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
-param_grid = [{'C': np.logspace(-4, 4, 15)}]
+param_grid = [{'C': np.logspace(-4, 4, 12)}]
 
 grid_search = GridSearchCV(
     estimator=svm.LinearSVC(loss='hinge'),
