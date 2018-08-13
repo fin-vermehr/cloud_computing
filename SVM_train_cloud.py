@@ -57,7 +57,7 @@ print(pd.DataFrame(
       index=[['actual', 'actual'], ['spam', 'ham']],
       columns=[['predicted', 'predicted'], ['spam', 'ham']]))
 
-param_grid = [{'C': np.logspace(-4, 4, 12)}]
+param_grid = [{'C': np.logspace(-4, 4, 15)}]
 
 grid_search = GridSearchCV(
     estimator=svm.LinearSVC(loss='hinge'),
@@ -104,7 +104,6 @@ for file in os.listdir('processed_companies'):
     df_final = pd.DataFrame()
     df_final['score'] = score_list
     pprint(file)
-    file = file.strip(' ')
     df_final.to_csv('scored_companies/' + file)
 
 
